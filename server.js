@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 app.get('/scrapper', function (req, res) {
     axios.get('https://comicbook.com/comics/news/').then(function (response) {
@@ -25,7 +25,9 @@ app.get('/scrapper', function (req, res) {
             var results = {};
 
             results.title = $(element).find('h2').text();
-            results.link = $(elemnt).children('a').attr('href');
+            results.link = $(element).children('a').attr('href');
+            results.img = $(element).find('noscript').text();
+
 
             db.Article.create(results)
                 .then(function (dbArticles) {
@@ -37,5 +39,19 @@ app.get('/scrapper', function (req, res) {
         });
         res.send('Scrapping what needed to be scraped has been scraped, so no need to scrap with the scrapper any more, Scrapper-Dapper!');
     });
+});
+
+app.get('/articles', function (req, res) {
+    db.Article.find({}).
+        then(function (dbArticles) {
+            res.json(dbArticles);
+        })
+        .catch(function (err) {
+            res.json(err);
+        });
+});
+
+app.listen(PORT, function () {
+    console.log("App running on port " + PORT + "!");
 });
 
