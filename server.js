@@ -17,3 +17,14 @@ app.use(express.static("public"));
 
 mongoose.connect(MONGODB_URI);
 
+app.get('/scrapper', function (req, res) {
+    axios.get('https://comicbook.com/comics/news/').then(function (response) {
+        var $ = cheerio.load(response.data);
+
+        $('article.category_art').each(function(i,element){
+            var title = $(element).find('h2').text();
+            var link = $(elemnt).children('a').attr('href');
+        })
+    })
+})
+
