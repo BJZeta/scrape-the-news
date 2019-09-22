@@ -25,6 +25,7 @@ app.get('/scrapper', function (req, res) {
             var results = {};
 
             results.title = $(element).find('h2').text();
+            results.publisher = $(element).find('span').text();
             results.link = $(element).children('a').attr('href');
             results.img = $(element).find('noscript').text();
 
