@@ -5,11 +5,12 @@ var cheerio = require('cheerio');
 
 var db = require('./models');
 
-var PORT = 6161;
+var PORT = 8000;
 
 var app = express();
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -75,6 +76,16 @@ app.post('/articles/:id', function (req, res) {
             res.json(err);
         });
 });
+
+app.delete('/articles/delete', function (req,res){
+    db.Article.deleteMany({})
+    .then(function(dbArticles){
+        res.json(dbArticles);
+    })
+    .catch(function(err){
+        res.json(err);
+    })
+})
 
 app.listen(PORT, function () {
     console.log("App running on port " + PORT + "!");
